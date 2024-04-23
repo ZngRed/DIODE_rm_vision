@@ -108,6 +108,13 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   rclcpp::Time time = target_msg->header.stamp;
   aiming_msg.header.stamp = time;
   aiming_msg.header.frame_id = target_msg->header.frame_id;
+  aiming_msg.tracking = target_msg->tracking;
+  aiming_msg.id = target_msg->id;
+  aiming_msg.armors_num = target_msg->armors_num;
+  aiming_msg.fire = 0;
+  aiming_msg.position.x = target_msg->position.x;
+  aiming_msg.position.y = target_msg->position.y;
+  aiming_msg.position.z = target_msg->position.z;
   aiming_msg.pitch = delta_pitch;
   aiming_msg.yaw = delta_yaw;
 

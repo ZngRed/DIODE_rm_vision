@@ -134,6 +134,7 @@ void RMSerialDriver::receiveData()
           tf_broadcaster_->sendTransform(t);
 
           state_msg_.v = packet.v;
+          state_msg_.roll = packet.roll;
           state_msg_.pitch = packet.pitch;
           state_msg_.yaw = packet.yaw;
           state_pub_->publish(state_msg_);
@@ -160,12 +161,13 @@ void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Aiming::SharedPtr 
 
   try {
     SendPacket packet;
-    // packet.tracking = msg->tracking;
-    // packet.id = id_unit8_map.at(msg->id);
-    // packet.armors_num = msg->armors_num;
-    // packet.x = msg->position.x;
-    // packet.y = msg->position.y;
-    // packet.z = msg->position.z;
+    packet.tracking = msg->tracking;
+    packet.id = id_unit8_map.at(msg->id);
+    packet.armors_num = msg->armors_num;
+    packet.fire = msg->fire;
+    packet.x = msg->position.x;
+    packet.y = msg->position.y;
+    packet.z = msg->position.z;
     // packet.yaw = msg->yaw;
     // packet.vx = msg->velocity.x;
     // packet.vy = msg->velocity.y;
