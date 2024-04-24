@@ -143,6 +143,14 @@ void ArmorDetectorNode::imageCallback(const sensor_msgs::msg::Image::ConstShared
         armors_msg_.armors.emplace_back(armor_msg);
         marker_array_.markers.emplace_back(armor_marker_);
         marker_array_.markers.emplace_back(text_marker_);
+
+        // Publisher
+        rclcpp::Publisher<auto_aim_interfaces::msg::Target>::SharedPtr 
+          target_pub_ = this->create_publisher<auto_aim_interfaces::msg::Target>(
+            "/tracker/target", rclcpp::SensorDataQoS());
+        auto_aim_interfaces::msg::Target target_msg;
+        target_msg.armors_num = 7;
+        target_pub_->publish(target_msg);
       } else {
         RCLCPP_WARN(this->get_logger(), "PnP failed!");
       }

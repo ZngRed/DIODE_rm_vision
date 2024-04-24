@@ -1,10 +1,16 @@
 camera: hik
 
 odom2camera:
+<<<<<<< HEAD
   xyz: "\"0.0 0.0 0.0\""
   rpy: "\"0.0 0.0 0.0\""
+=======
+  xyz: "\"0.13 0.0  -0.04\""
+  rpy: "\"0.0  0.02  0.0\""
+>>>>>>> d43857c (20240423)
 
 detector_log_level: INFO
 tracker_log_level:  INFO
-predictor_log_level:  INFO
+predictor_log_level:  DEBUG
 serial_log_level: DEBUG
+  

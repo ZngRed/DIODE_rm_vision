@@ -258,6 +258,7 @@ void ArmorTrackerNode::armorsCallback(const auto_aim_interfaces::msg::Armors::Sh
 
   last_time_ = time;
 
+  // RCLCPP_WARN(this->get_logger(), "Starting target_pub_!");
   target_pub_->publish(target_msg);
 
   publishMarkers(target_msg);

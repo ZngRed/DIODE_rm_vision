@@ -118,7 +118,7 @@ void RMSerialDriver::receiveData()
             setParam(rclcpp::Parameter("detect_color", packet.detect_color));
             previous_receive_color_ = packet.detect_color;
           }
-
+          
           if (packet.reset_tracker) {
             resetTracker();
           }
@@ -129,6 +129,7 @@ void RMSerialDriver::receiveData()
           t.header.frame_id = "odom";
           t.child_frame_id = "gimbal_link";
           tf2::Quaternion q;
+          // RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 20, "q: %lf %lf %lf", packet.roll, packet.pitch, packet.yaw);
           q.setRPY(packet.roll, packet.pitch, packet.yaw);
           t.transform.rotation = tf2::toMsg(q);
           tf_broadcaster_->sendTransform(t);
@@ -158,8 +159,9 @@ void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Aiming::SharedPtr 
   const static std::map<std::string, uint8_t> id_unit8_map{
     {"", 0},  {"outpost", 0}, {"1", 1}, {"1", 1},     {"2", 2},
     {"3", 3}, {"4", 4},       {"5", 5}, {"guard", 6}, {"base", 7}};
-
+    
   try {
+    
     SendPacket packet;
     packet.tracking = msg->tracking;
     packet.id = id_unit8_map.at(msg->id);
@@ -182,6 +184,7 @@ void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Aiming::SharedPtr 
 
     std::vector<uint8_t> data = toVector(packet);
 
+    // RCLCPP_WARN(get_logger(), "send data!!!!!!!!!!!!!!!");
     serial_driver_->port()->send(data);
 
     // LOG [Send] packet.tracking
@@ -196,6 +199,7 @@ void RMSerialDriver::sendData(const auto_aim_interfaces::msg::Aiming::SharedPtr 
     reopenPort();
   }
 }
+
 
 void RMSerialDriver::getParams()
 {

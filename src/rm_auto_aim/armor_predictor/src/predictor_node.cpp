@@ -10,7 +10,7 @@ namespace rm_auto_aim
 ArmorPredictorNode::ArmorPredictorNode(const rclcpp::NodeOptions & options)
 : Node("armor_predictor", options)
 {
-    RCLCPP_INFO(this->get_logger(), "Starting PredictorNode!");
+    RCLCPP_WARN(this->get_logger(), "Starting PredictorNode!");
 
     target_sub_ = this->create_subscription<auto_aim_interfaces::msg::Target>(
       "/tracker/target", rclcpp::SensorDataQoS(),
@@ -40,6 +40,7 @@ ArmorPredictorNode::ArmorPredictorNode(const rclcpp::NodeOptions & options)
 
 void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::SharedPtr target_msg)
 {
+  RCLCPP_WARN(this->get_logger(), "targetCallbacktargetCallbacktargetCallback!");
   float aim_x = 0, aim_y = 0, aim_z = 0; // aim point 落点，传回用于可视化
   float delta_pitch = 0; //输出控制量 pitch绝对角度 弧度
   float delta_yaw = 0;   //输出控制量 yaw绝对角度 弧度
@@ -48,32 +49,39 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   predictor_.st.current_pitch = state_pitch;
   predictor_.st.current_yaw = state_yaw;
   // predictor_.st.tracking = target_msg->tracking;
-  switch(std::stoi(target_msg->id)){
-    case 0:
-      predictor_.st.armor_id = ARMOR_OUTPOST;
-      break;
-    case 1:
-      predictor_.st.armor_id = ARMOR_HERO;
-      break;
-    case 2:
-      predictor_.st.armor_id = ARMOR_ENGINEER;
-      break;
-    case 3:
-      predictor_.st.armor_id = ARMOR_INFANTRY3;
-      break;
-    case 4:
-      predictor_.st.armor_id = ARMOR_INFANTRY4;
-      break;
-    case 5:
-      predictor_.st.armor_id = ARMOR_INFANTRY5;
-      break;
-    case 6:
-      predictor_.st.armor_id = ARMOR_GUARD;
-      break;
-    case 7:
-      predictor_.st.armor_id = ARMOR_BASE;
-      break;
-  }
+  try {  
+    switch(std::stoi(target_msg->id)){
+      case 0:
+        predictor_.st.armor_id = ARMOR_OUTPOST;
+        break;
+      case 1:
+        predictor_.st.armor_id = ARMOR_HERO;
+        break;
+      case 2:
+        predictor_.st.armor_id = ARMOR_ENGINEER;
+        break;
+      case 3:
+        predictor_.st.armor_id = ARMOR_INFANTRY3;
+        break;
+      case 4:
+        predictor_.st.armor_id = ARMOR_INFANTRY4;
+        break;
+      case 5:
+        predictor_.st.armor_id = ARMOR_INFANTRY5;
+        break;
+      case 6:
+        predictor_.st.armor_id = ARMOR_GUARD;
+        break;
+      case 7:
+        predictor_.st.armor_id = ARMOR_BASE;
+        break;
+    }
+  } catch (const std::invalid_argument& e) {  
+      std::cerr << "Invalid argument: " << e.what() << std::endl;  
+  } catch (const std::out_of_range& e) {  
+      std::cerr << "Out of range: " << e.what() << std::endl;  
+  }  
+  
   switch(target_msg->armors_num){
     case 2:
       predictor_.st.armor_num = ARMOR_NUM_BALANCE;
@@ -108,6 +116,7 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   rclcpp::Time time = target_msg->header.stamp;
   aiming_msg.header.stamp = time;
   aiming_msg.header.frame_id = target_msg->header.frame_id;
+<<<<<<< HEAD
   aiming_msg.tracking = target_msg->tracking;
   aiming_msg.id = target_msg->id;
   aiming_msg.armors_num = target_msg->armors_num;
@@ -115,6 +124,14 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   aiming_msg.position.x = target_msg->position.x;
   aiming_msg.position.y = target_msg->position.y;
   aiming_msg.position.z = target_msg->position.z;
+=======
+  aiming_msg.id = target_msg->id;
+  aiming_msg.armors_num = target_msg->armors_num;
+  aiming_msg.fire = false;
+  aiming_msg.position.x = target_msg->position.x;
+  aiming_msg.position.x = target_msg->position.y;
+  aiming_msg.position.x = target_msg->position.z;
+>>>>>>> d43857c (20240423)
   aiming_msg.pitch = delta_pitch;
   aiming_msg.yaw = delta_yaw;
 
