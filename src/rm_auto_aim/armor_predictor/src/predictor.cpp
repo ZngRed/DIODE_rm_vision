@@ -149,6 +149,7 @@ void Predictor::autoSolveTrajectory(float *pitch, float *yaw, float *aim_x, floa
     float timeDelay = st.bias_time/1000.0 + t;
     st.tar_yaw += st.v_yaw * timeDelay;
 
+
     //计算四块装甲板的位置
     //装甲板id顺序，以四块装甲板为例，逆时针编号
     //      2
@@ -193,16 +194,20 @@ void Predictor::autoSolveTrajectory(float *pitch, float *yaw, float *aim_x, floa
 
 
     } else {
-
         for (i = 0; i<4; i++) {
             float tmp_yaw = st.tar_yaw + i * PI/2.0;
+            if(tmp_yaw >= 2 * PI)
+                tmp_yaw -= 2 * PI;
             float r = use_1 ? st.r1 : st.r2;
             tar_position[i].x = st.xw - r*cos(tmp_yaw);
             tar_position[i].y = st.yw - r*sin(tmp_yaw);
             tar_position[i].z = use_1 ? st.zw : st.zw + st.dz;
             tar_position[i].yaw = tmp_yaw;
             use_1 = !use_1;
+            
+            // printf("tar_yaw_%d: %f ", i, tmp_yaw * 180 / PI);
         }
+        // printf("state_yaw: %f\n", *yaw);
 
             //2种常见决策方案：
             //1.计算枪管到目标装甲板yaw最小的那个装甲板

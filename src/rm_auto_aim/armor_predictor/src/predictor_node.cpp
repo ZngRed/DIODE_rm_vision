@@ -41,8 +41,8 @@ ArmorPredictorNode::ArmorPredictorNode(const rclcpp::NodeOptions & options)
 void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::SharedPtr target_msg)
 {
   float aim_x = 0, aim_y = 0, aim_z = 0; // aim point 落点，传回用于可视化
-  float tgt_pitch = 0; //控制量 pitch绝对角度 弧度
-  float tgt_yaw = 0;   //控制量 yaw绝对角度 弧度
+  float tar_pitch = 0; //控制量 pitch绝对角度 弧度
+  float tar_yaw = 0;   //控制量 yaw绝对角度 弧度
 
   predictor_.st.current_v = state_v;
   predictor_.st.current_pitch = state_pitch;
@@ -102,7 +102,7 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   predictor_.st.r2 = target_msg->radius_2;
   predictor_.st.dz = target_msg->dz;
 
-  predictor_.autoSolveTrajectory(&tgt_pitch, &tgt_yaw, &aim_x, &aim_y, &aim_z);
+  predictor_.autoSolveTrajectory(&tar_pitch, &tar_yaw, &aim_x, &aim_y, &aim_z);
 
   // printf("main pitch:%f° yaw:%f° ", delta_pitch * 180 / PI, delta_yaw * 180 / PI);
   // printf("\npitch:%frad yaw:%frad aim_x:%f aim_y:%f aim_z:%f", delta_pitch, delta_yaw, aim_x, aim_y, aim_z);
@@ -120,8 +120,8 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   aiming_msg.position.x = target_msg->position.x;
   aiming_msg.position.y = target_msg->position.y;
   aiming_msg.position.z = target_msg->position.z;
-  aiming_msg.pitch = tgt_pitch * 180 / PI;
-  aiming_msg.yaw = tgt_yaw * 180 / PI;
+  aiming_msg.pitch = tar_pitch * 180 / PI;
+  aiming_msg.yaw = tar_yaw * 180 / PI;
 
   if(target_msg->armors_num == 0){
     aiming_msg.pitch = 0;
@@ -131,7 +131,7 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   // RCLCPP_ERROR(this->get_logger(), "main p: %f y: %f | state p: %f y: %f", delta_pitch, delta_yaw, state_pitch, state_yaw);
 
   RCLCPP_WARN(this->get_logger(), "delta pitch:%f° yaw:%f° ", 
-      (-1) * (tgt_pitch - state_pitch) * 180 / PI, (-1) * (tgt_yaw - state_yaw) * 180 / PI);
+      (-1) * (tar_pitch - state_pitch) * 180 / PI, (-1) * (tar_yaw - state_yaw) * 180 / PI);
 
   RCLCPP_WARN(this->get_logger(), "armors_num %d", target_msg->armors_num);
 
