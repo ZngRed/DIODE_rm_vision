@@ -40,15 +40,13 @@ ArmorPredictorNode::ArmorPredictorNode(const rclcpp::NodeOptions & options)
 
 void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::SharedPtr target_msg)
 {
-  RCLCPP_WARN(this->get_logger(), "targetCallbacktargetCallbacktargetCallback!");
   float aim_x = 0, aim_y = 0, aim_z = 0; // aim point 落点，传回用于可视化
-  float delta_pitch = 0; //输出控制量 pitch绝对角度 弧度
-  float delta_yaw = 0;   //输出控制量 yaw绝对角度 弧度
+  float tgt_pitch = 0; //控制量 pitch绝对角度 弧度
+  float tgt_yaw = 0;   //控制量 yaw绝对角度 弧度
 
   predictor_.st.current_v = state_v;
   predictor_.st.current_pitch = state_pitch;
   predictor_.st.current_yaw = state_yaw;
-  // predictor_.st.tracking = target_msg->tracking;
   try {  
     switch(std::stoi(target_msg->id)){
       case 0:
@@ -81,7 +79,6 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   } catch (const std::out_of_range& e) {  
       std::cerr << "Out of range: " << e.what() << std::endl;  
   }  
-  
   switch(target_msg->armors_num){
     case 2:
       predictor_.st.armor_num = ARMOR_NUM_BALANCE;
@@ -105,10 +102,10 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   predictor_.st.r2 = target_msg->radius_2;
   predictor_.st.dz = target_msg->dz;
 
-  predictor_.autoSolveTrajectory(&delta_pitch, &delta_yaw, &aim_x, &aim_y, &aim_z);
+  predictor_.autoSolveTrajectory(&tgt_pitch, &tgt_yaw, &aim_x, &aim_y, &aim_z);
 
-  printf("main pitch:%f° yaw:%f° ", delta_pitch * 180 / PI, delta_yaw * 180 / PI);
-  printf("\npitch:%frad yaw:%frad aim_x:%f aim_y:%f aim_z:%f", delta_pitch, delta_yaw, aim_x, aim_y, aim_z);
+  // printf("main pitch:%f° yaw:%f° ", delta_pitch * 180 / PI, delta_yaw * 180 / PI);
+  // printf("\npitch:%frad yaw:%frad aim_x:%f aim_y:%f aim_z:%f", delta_pitch, delta_yaw, aim_x, aim_y, aim_z);
 
   // Init message
   auto_aim_interfaces::msg::Aiming aiming_msg;
@@ -123,8 +120,20 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   aiming_msg.position.x = target_msg->position.x;
   aiming_msg.position.y = target_msg->position.y;
   aiming_msg.position.z = target_msg->position.z;
-  aiming_msg.pitch = delta_pitch;
-  aiming_msg.yaw = delta_yaw;
+  aiming_msg.pitch = tgt_pitch * 180 / PI;
+  aiming_msg.yaw = tgt_yaw * 180 / PI;
+
+  if(target_msg->armors_num == 0){
+    aiming_msg.pitch = 0;
+    aiming_msg.yaw = 0;
+  }
+
+  // RCLCPP_ERROR(this->get_logger(), "main p: %f y: %f | state p: %f y: %f", delta_pitch, delta_yaw, state_pitch, state_yaw);
+
+  RCLCPP_WARN(this->get_logger(), "delta pitch:%f° yaw:%f° ", 
+      (-1) * (tgt_pitch - state_pitch) * 180 / PI, (-1) * (tgt_yaw - state_yaw) * 180 / PI);
+
+  RCLCPP_WARN(this->get_logger(), "armors_num %d", target_msg->armors_num);
 
   aiming_pub_->publish(aiming_msg);
 

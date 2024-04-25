@@ -24,13 +24,13 @@ float t = 0.5f; // 飞行时间
 Predictor::Predictor()
 {
     //定义参数
-    st.k = 0.092;
-    st.bias_time = 100;
-    st.s_bias = 0.19133;
-    st.z_bias = 0.21265;
+    st.k = 0.14;
+    st.bias_time = 300;
+    st.s_bias = 0.2;
+    st.z_bias = 0.1;
     
     st.bullet_type =  BULLET_17;
-    st.current_v = 18;
+    st.current_v = 27;
     st.current_pitch = 0;
     st.current_yaw = 0;
 
@@ -67,7 +67,7 @@ float Predictor::monoDirectionalAirResistanceModel(float s, float v, float angle
     float z;
     //t为给定v与angle时的飞行时间
     t = (float)((exp(st.k * s) - 1) / (st.k * v * cos(angle)));
-    if(t < 0)
+    if(t < 0 || t > 5)
     {
         //由于严重超出最大射程，计算过程中浮点数溢出，导致t变成负数
         printf("[WRAN]: Exceeding the maximum range!\n");
@@ -77,7 +77,7 @@ float Predictor::monoDirectionalAirResistanceModel(float s, float v, float angle
     }
     //z为给定v与angle时的高度
     z = (float)(v * sin(angle) * t - GRAVITY * t * t / 2);
-    printf("model %f %f\n", t, z);
+    // printf("model %f %f\n", t, z);
     return z;
 }
 
@@ -123,8 +123,8 @@ float Predictor::pitchTrajectoryCompensation(float s, float z, float v)
         }
         dz = 0.3*(z - z_actual);
         z_temp = z_temp + dz;
-        printf("iteration num %d: angle_pitch %f, temp target z:%f, err of z:%f, s:%f\n",
-            i + 1, angle_pitch * 180 / PI, z_temp, dz,s);
+        // printf("iteration num %d: angle_pitch %f, temp target z:%f, err of z:%f, s:%f\n",
+            // i + 1, angle_pitch * 180 / PI, z_temp, dz,s);
         if (fabsf(dz) < 0.00001)
         {
             break;

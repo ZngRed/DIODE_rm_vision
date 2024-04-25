@@ -23,7 +23,7 @@
 #include "armor_detector/number_classifier.hpp"
 #include "armor_detector/pnp_solver.hpp"
 #include "auto_aim_interfaces/msg/armors.hpp"
-#include "auto_aim_interfaces/msg/target.hpp"
+#include "auto_aim_interfaces/msg/aiming.hpp"
 
 namespace rm_auto_aim
 {
