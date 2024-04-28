@@ -240,8 +240,6 @@ void Predictor::autoSolveTrajectory(float *pitch, float *yaw, float *aim_x, floa
 
     }
 
-	
-
     *aim_z = tar_position[idx].z + st.vzw * timeDelay;
     *aim_x = tar_position[idx].x + st.vxw * timeDelay;
     *aim_y = tar_position[idx].y + st.vyw * timeDelay;

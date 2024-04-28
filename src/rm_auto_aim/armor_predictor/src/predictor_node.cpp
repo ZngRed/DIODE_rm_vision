@@ -126,7 +126,19 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   if(target_msg->armors_num == 0){
     aiming_msg.pitch = 0;
     aiming_msg.yaw = 0;
+    tar_count = 0;
+  }else tar_count++;
+
+  if(tar_count >=10){
+    aiming_msg.fire = 1;
+    tar_count = 10;
   }
+
+  if(aiming_msg.fire == 0)
+    RCLCPP_ERROR(this->get_logger(), "aiming_msg.fire == 0!!!!!!!!!!!!!!!!!!!!!");
+
+
+  printf("tar_count = %d\n", tar_count);
 
   // RCLCPP_ERROR(this->get_logger(), "main p: %f y: %f | state p: %f y: %f", delta_pitch, delta_yaw, state_pitch, state_yaw);
 

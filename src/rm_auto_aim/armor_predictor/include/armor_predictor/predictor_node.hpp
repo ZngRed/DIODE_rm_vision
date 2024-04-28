@@ -34,6 +34,7 @@ public:
   float state_v = 0;
   float state_pitch = 0;
   float state_yaw = 0;
+  int tar_count = 0;
 
 private:
   void targetCallback(const auto_aim_interfaces::msg::Target::SharedPtr target_msg);

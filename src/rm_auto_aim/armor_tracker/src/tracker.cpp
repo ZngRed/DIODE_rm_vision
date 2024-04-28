@@ -192,7 +192,7 @@ void Tracker::handleArmorJump(const Armor & current_armor)
     target_state(4) = current_armor.pose.position.z;
     std::swap(target_state(8), another_r);
   }
-  RCLCPP_WARN(rclcpp::get_logger("armor_tracker"), "Armor jump!");
+  RCLCPP_ERROR(rclcpp::get_logger("armor_tracker"), "Armor jump!");
 
   // If position difference is larger than max_match_distance_,
   // take this case as the ekf diverged, reset the state
