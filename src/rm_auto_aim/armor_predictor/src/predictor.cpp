@@ -25,7 +25,7 @@ Predictor::Predictor()
 {
     //定义参数
     st.k = 0.14;
-    st.bias_time = 300;
+    st.bias_time = 250;
     st.s_bias = 0.2;
     st.z_bias = 0.1;
     
@@ -196,7 +196,7 @@ void Predictor::autoSolveTrajectory(float *pitch, float *yaw, float *aim_x, floa
     } else {
         for (i = 0; i<4; i++) {
             float tmp_yaw = st.tar_yaw + i * PI/2.0;
-            if(tmp_yaw >= 2 * PI)
+            if(tmp_yaw >= PI)
                 tmp_yaw -= 2 * PI;
             float r = use_1 ? st.r1 : st.r2;
             tar_position[i].x = st.xw - r*cos(tmp_yaw);
@@ -205,9 +205,9 @@ void Predictor::autoSolveTrajectory(float *pitch, float *yaw, float *aim_x, floa
             tar_position[i].yaw = tmp_yaw;
             use_1 = !use_1;
             
-            // printf("tar_yaw_%d: %f ", i, tmp_yaw * 180 / PI);
+            printf("tar_yaw_%d: %f ", i, tmp_yaw);
         }
-        // printf("state_yaw: %f\n", *yaw);
+        printf("state_yaw: %f\n", *yaw);
 
             //2种常见决策方案：
             //1.计算枪管到目标装甲板yaw最小的那个装甲板

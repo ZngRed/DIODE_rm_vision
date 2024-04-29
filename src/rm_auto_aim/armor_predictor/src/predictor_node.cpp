@@ -41,8 +41,8 @@ ArmorPredictorNode::ArmorPredictorNode(const rclcpp::NodeOptions & options)
 void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::SharedPtr target_msg)
 {
   float aim_x = 0, aim_y = 0, aim_z = 0; // aim point 落点，传回用于可视化
-  float tar_pitch = 0; //控制量 pitch绝对角度 弧度
-  float tar_yaw = 0;   //控制量 yaw绝对角度 弧度
+  float tar_pitch = state_pitch; //控制量 pitch绝对角度 弧度
+  float tar_yaw = state_yaw;   //控制量 yaw绝对角度 弧度
 
   predictor_.st.current_v = state_v;
   predictor_.st.current_pitch = state_pitch;
@@ -138,14 +138,14 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
     RCLCPP_ERROR(this->get_logger(), "aiming_msg.fire == 0!!!!!!!!!!!!!!!!!!!!!");
 
 
-  printf("tar_count = %d\n", tar_count);
+  // printf("tar_count = %d\n", tar_count);
 
   // RCLCPP_ERROR(this->get_logger(), "main p: %f y: %f | state p: %f y: %f", delta_pitch, delta_yaw, state_pitch, state_yaw);
 
-  RCLCPP_WARN(this->get_logger(), "delta pitch:%f° yaw:%f° ", 
-      (-1) * (tar_pitch - state_pitch) * 180 / PI, (-1) * (tar_yaw - state_yaw) * 180 / PI);
+  // RCLCPP_WARN(this->get_logger(), "delta pitch:%f° yaw:%f° ", 
+  //     (-1) * (tar_pitch - state_pitch) * 180 / PI, (-1) * (tar_yaw - state_yaw) * 180 / PI);
 
-  RCLCPP_WARN(this->get_logger(), "armors_num %d", target_msg->armors_num);
+  // RCLCPP_WARN(this->get_logger(), "armors_num %d", target_msg->armors_num);
 
   aiming_pub_->publish(aiming_msg);
 

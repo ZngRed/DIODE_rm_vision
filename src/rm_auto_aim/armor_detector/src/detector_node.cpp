@@ -156,7 +156,7 @@ void ArmorDetectorNode::imageCallback(const sensor_msgs::msg::Image::ConstShared
           aiming_msg.fire = 1;
           detec_count = 15;
         }
-        printf("detec_count = %d\n", detec_count);
+        // printf("detec_count = %d\n", detec_count);
 
         
         aiming_pub_->publish(aiming_msg);
