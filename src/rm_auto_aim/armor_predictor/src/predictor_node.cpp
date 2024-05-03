@@ -48,6 +48,7 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
   predictor_.st.current_pitch = state_pitch;
   predictor_.st.current_yaw = state_yaw;
   try {  
+    std::cout<<"target_msg_id: "<<target_msg->id<<std::endl;
     switch(std::stoi(target_msg->id)){
       case 0:
         predictor_.st.armor_id = ARMOR_OUTPOST;
@@ -138,7 +139,7 @@ void ArmorPredictorNode::targetCallback(const auto_aim_interfaces::msg::Target::
     RCLCPP_ERROR(this->get_logger(), "aiming_msg.fire == 0!!!!!!!!!!!!!!!!!!!!!");
 
 
-  // printf("tar_count = %d\n", tar_count);
+  printf("tar_count = %d\n", tar_count);
 
   // RCLCPP_ERROR(this->get_logger(), "main p: %f y: %f | state p: %f y: %f", delta_pitch, delta_yaw, state_pitch, state_yaw);
 
