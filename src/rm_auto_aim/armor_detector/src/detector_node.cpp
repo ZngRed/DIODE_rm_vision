@@ -89,10 +89,20 @@ ArmorDetectorNode::ArmorDetectorNode(const rclcpp::NodeOptions & options)
   img_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
     "/image_raw", rclcpp::SensorDataQoS(),
     std::bind(&ArmorDetectorNode::imageCallback, this, std::placeholders::_1));
+
+  state_sub_ = this->create_subscription<auto_aim_interfaces::msg::State>(
+      "/state", rclcpp::SensorDataQoS(),
+      std::bind(&ArmorDetectorNode::stateCallback, this, std::placeholders::_1));
+}
+
+void ArmorDetectorNode::stateCallback(const auto_aim_interfaces::msg::State::SharedPtr state_msg)
+{
+  mode = state_msg->mode;
 }
 
 void ArmorDetectorNode::imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr img_msg)
 {
+  if(mode != 0) return;
   auto armors = detectArmors(img_msg);
 
   if (pnp_solver_ != nullptr) {

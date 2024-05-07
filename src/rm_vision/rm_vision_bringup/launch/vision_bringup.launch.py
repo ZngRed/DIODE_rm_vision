@@ -1,12 +1,13 @@
 import os
 import sys
+import yaml
 from ament_index_python.packages import get_package_share_directory
 sys.path.append(os.path.join(get_package_share_directory('rm_vision_bringup'), 'launch'))
 
 
 def generate_launch_description():
 
-    from common import node_params, launch_params, robot_state_publisher, tracker_node, predictor_node
+    from common import node_params, launch_params, robot_state_publisher, tracker_node, predictor_node, processor_node
     from launch_ros.descriptions import ComposableNode
     from launch_ros.actions import ComposableNodeContainer, Node
     from launch.actions import TimerAction, Shutdown
@@ -35,6 +36,15 @@ def generate_launch_description():
                     name='armor_detector',
                     parameters=[node_params],
                     extra_arguments=[{'use_intra_process_comms': True}]
+                ),
+                ComposableNode(
+                    package='buff_detect',
+                    plugin='buff_detect::BuffDetectorNode',
+                    name='buff_detect',
+                    parameters=[node_params], 
+                    extra_arguments=[{
+                        'use_intra_process_comms': True
+                    }]
                 )
             ],
             output='both',
@@ -43,7 +53,7 @@ def generate_launch_description():
                            'armor_detector:='+launch_params['detector_log_level']],
             on_exit=Shutdown(),
         )
-
+    
     hik_camera_node = get_camera_node('hik_camera', 'hik_camera::HikCameraNode')
     mv_camera_node = get_camera_node('mindvision_camera', 'mindvision_camera::MVCameraNode')
     galaxy_camera_node = get_camera_node('galaxy_camera', 'galaxy_camera::GalaxyCameraNode')
@@ -82,10 +92,16 @@ def generate_launch_description():
         actions=[predictor_node],
     )
 
+    delay_buff_predictor_node = TimerAction(
+        period=3.0,
+        actions=[processor_node],
+    )
+
     return LaunchDescription([
         robot_state_publisher,
         cam_detector,
         delay_serial_node,
         delay_tracker_node,
-        delay_predictor_node
+        delay_predictor_node,
+        delay_buff_predictor_node
     ])

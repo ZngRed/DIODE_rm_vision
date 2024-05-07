@@ -138,6 +138,8 @@ void RMSerialDriver::receiveData()
           state_msg_.roll = packet.roll;
           state_msg_.pitch = packet.pitch;
           state_msg_.yaw = packet.yaw;
+          state_msg_.mode = packet.mode;
+
           state_pub_->publish(state_msg_);
           
         } else {

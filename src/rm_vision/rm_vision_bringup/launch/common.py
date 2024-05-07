@@ -39,3 +39,12 @@ predictor_node = Node(
     parameters=[node_params],
     ros_arguments=['--log-level', 'armor_predictor:='+launch_params['predictor_log_level']],
 )
+
+processor_node = Node(
+        package='buff_processor',
+        executable='buff_processor_node',
+        name='buff_processor',
+        output='screen', # log/screen/both
+        emulate_tty=True,
+        parameters=[node_params],
+    )

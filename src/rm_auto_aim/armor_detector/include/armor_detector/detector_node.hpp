@@ -24,6 +24,7 @@
 #include "armor_detector/pnp_solver.hpp"
 #include "auto_aim_interfaces/msg/armors.hpp"
 #include "auto_aim_interfaces/msg/aiming.hpp"
+#include "auto_aim_interfaces/msg/state.hpp"
 
 namespace rm_auto_aim
 {
@@ -36,6 +37,8 @@ public:
 private:
   void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr img_msg);
 
+  void stateCallback(const auto_aim_interfaces::msg::State::SharedPtr state_msg);
+
   std::unique_ptr<Detector> initDetector();
   std::vector<Armor> detectArmors(const sensor_msgs::msg::Image::ConstSharedPtr & img_msg);
 
@@ -43,6 +46,8 @@ private:
   void destroyDebugPublishers();
 
   void publishMarkers();
+
+  rclcpp::Subscription<auto_aim_interfaces::msg::State>::SharedPtr state_sub_;
 
   // Armor Detector
   std::unique_ptr<Detector> detector_;
@@ -77,6 +82,7 @@ private:
   image_transport::Publisher result_img_pub_;
 
   int detec_count = 0;
+  int mode = 0;
 };
 
 }  // namespace rm_auto_aim
